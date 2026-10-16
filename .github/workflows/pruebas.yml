@@ -1,0 +1,28 @@
+name: Pruebas Backend
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: backend-serverest
+  cancel-in-progress: false
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+          cache: maven
+      - run: mvn -B -ntp test
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: reporte-backend
+          path: |
+            target/karate-reports/
+            target/surefire-reports/
+            target/cleanup-hook-reports/
